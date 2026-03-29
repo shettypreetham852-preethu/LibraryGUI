@@ -164,7 +164,7 @@ public class LibraryServer {
     // ─── Static files ───────────────────────────────────────────
     static void handleStatic(HttpExchange ex) throws IOException {
         String path = ex.getRequestURI().getPath();
-        if (path.equals("/")) path = "/index.html";
+        if (path.equals("/")) path = "/login.html";
 
         File file = new File("web" + path);
         if (!file.exists() || file.isDirectory()) {
