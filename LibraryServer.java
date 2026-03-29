@@ -2,6 +2,7 @@ import com.sun.net.httpserver.*;
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
+import java.util.concurrent.Executors;
 
 public class LibraryServer {
 
@@ -21,7 +22,8 @@ public class LibraryServer {
         // Static file server
         server.createContext("/", LibraryServer::handleStatic);
 
-        server.setExecutor(null);
+        // Use a thread pool so CSS/JS/HTML can be served concurrently
+        server.setExecutor(Executors.newFixedThreadPool(10));
         server.start();
         System.out.println("========================================");
         System.out.println("  Library Server started on port " + port);
@@ -182,8 +184,15 @@ public class LibraryServer {
         else if (path.endsWith(".png"))  mime = "image/png";
         else if (path.endsWith(".jpg"))  mime = "image/jpeg";
         else if (path.endsWith(".svg"))  mime = "image/svg+xml";
+        else if (path.endsWith(".ico"))  mime = "image/x-icon";
+        else if (path.endsWith(".woff2")) mime = "font/woff2";
+        else if (path.endsWith(".woff")) mime = "font/woff";
 
         ex.getResponseHeaders().set("Content-Type", mime + "; charset=UTF-8");
+        // Cache static assets for 1 hour to prevent re-fetching
+        if (path.endsWith(".css") || path.endsWith(".js") || path.endsWith(".png") || path.endsWith(".jpg") || path.endsWith(".svg")) {
+            ex.getResponseHeaders().set("Cache-Control", "public, max-age=3600");
+        }
         byte[] bytes = Files.readAllBytes(file.toPath());
         ex.sendResponseHeaders(200, bytes.length);
         ex.getResponseBody().write(bytes);
