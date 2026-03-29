@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Library Management System</title>
+  <meta name="description" content="Modern Library Management System — manage books, members, and book issues with ease." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ─── TOAST CONTAINER ────────────────────────────────── -->
+  <div id="toast-container"></div>
+
+  <!-- ─── HEADER ─────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            <line x1="8" y1="7" x2="16" y2="7"/>
+            <line x1="8" y1="11" x2="14" y2="11"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Library System</h1>
+          <p class="tagline">Smart Book Management</p>
+        </div>
+      </div>
+      <nav class="header-actions">
+        <button class="btn btn-outline" onclick="logout()" style="color: #ef4444; border-color: #ef4444;">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Logout
+        </button>
+        <button class="btn btn-glow" onclick="openModal('addBook')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Book
+        </button>
+        <button class="btn btn-outline" onclick="openModal('addMember')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          Add Member
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ─── DASHBOARD STATS ────────────────────────────────── -->
+  <main class="container">
+    <section class="dashboard">
+      <div class="card stat-card" id="stat-books">
+        <div class="stat-icon books-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number" id="totalBooks">0</span>
+          <span class="stat-label">Total Books</span>
+        </div>
+      </div>
+      <div class="card stat-card" id="stat-members">
+        <div class="stat-icon members-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number" id="totalMembers">0</span>
+          <span class="stat-label">Members</span>
+        </div>
+      </div>
+      <div class="card stat-card" id="stat-issued">
+        <div class="stat-icon issued-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number" id="totalIssued">0</span>
+          <span class="stat-label">Issued</span>
+        </div>
+      </div>
+      <div class="card stat-card" id="stat-available">
+        <div class="stat-icon available-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number" id="totalAvailable">0</span>
+          <span class="stat-label">Available</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── QUICK ACTIONS ──────────────────────────────────── -->
+    <section class="quick-actions">
+      <button class="action-card" onclick="openModal('issueBook')">
+        <div class="action-icon issue-action">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <span>Issue Book</span>
+      </button>
+      <button class="action-card" onclick="openModal('returnBook')">
+        <div class="action-icon return-action">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        </div>
+        <span>Return Book</span>
+      </button>
+    </section>
+
+    <!-- ─── TABS ───────────────────────────────────────────── -->
+    <section class="tabs-section">
+      <div class="tab-bar">
+        <button class="tab active" data-tab="books" onclick="switchTab('books')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Books
+        </button>
+        <button class="tab" data-tab="members" onclick="switchTab('members')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Members
+        </button>
+        <button class="tab" data-tab="issued" onclick="switchTab('issued')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Issued
+        </button>
+        <button class="tab" data-tab="rankings" onclick="switchTab('rankings')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+          Rankings
+        </button>
+        <button class="tab" data-tab="warnings" onclick="switchTab('warnings')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Warnings <span id="warningBadge" class="badge badge-red" style="display:none; margin-left:8px; font-size: 0.7rem; padding: 2px 6px;">0</span>
+        </button>
+      </div>
+
+      <div class="tab-content active" id="tab-books">
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>ID</th><th>Title</th><th>Author</th><th>Status</th></tr></thead>
+            <tbody id="booksTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-members">
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>ID</th><th>Name</th><th>Borrowed Books</th></tr></thead>
+            <tbody id="membersTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-issued">
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Book ID</th><th>Member ID</th><th>Issue Date</th><th>Due Date</th><th>Overdue Days</th><th>Fine</th></tr></thead>
+            <tbody id="issuedTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-rankings">
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Rank</th><th>Member ID</th><th>Member Name</th><th>Total Borrowed</th></tr></thead>
+            <tbody id="rankingsTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-warnings">
+        <div class="warnings-grid" style="display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+          <div class="warning-box" style="background: #fff; border-radius: 12px; padding: 1.5rem; border: 1px solid var(--border-color);">
+            <h3 style="color: #f59e0b; display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; font-size: 1.1rem;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Due Tomorrow
+            </h3>
+            <div class="table-wrapper" style="box-shadow: none; border: 1px solid var(--border-color); margin-bottom: 0;">
+              <table style="font-size: 0.9rem;">
+                <thead><tr><th>Book</th><th>Member</th></tr></thead>
+                <tbody id="warningsDueTomorrowTable"></tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div class="warning-box" style="background: #fff; border-radius: 12px; padding: 1.5rem; border: 1px solid var(--border-color);">
+            <h3 style="color: #ef4444; display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; font-size: 1.1rem;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Missed Book Penalty (₹500/ea)
+            </h3>
+            <div class="table-wrapper" style="box-shadow: none; border: 1px solid var(--border-color); margin-bottom: 0;">
+              <table style="font-size: 0.9rem;">
+                <thead><tr><th>Book</th><th>Member</th><th>Penalty</th></tr></thead>
+                <tbody id="warningsMissedTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ─── MODAL OVERLAY ───────────────────────────────────── -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <h2 id="modalTitle">Title</h2>
+
+      <!-- Add Book Form -->
+      <form id="formAddBook" class="modal-form" onsubmit="submitAddBook(event)">
+        <div class="field">
+          <label for="bookTitle">Book Title</label>
+          <input type="text" id="bookTitle" placeholder="e.g. Data Structures" required />
+        </div>
+        <div class="field">
+          <label for="bookAuthor">Author</label>
+          <input type="text" id="bookAuthor" placeholder="e.g. Thomas Cormen" required />
+        </div>
+        <button type="submit" class="btn btn-glow full">Add Book</button>
+      </form>
+
+      <!-- Add Member Form -->
+      <form id="formAddMember" class="modal-form" onsubmit="submitAddMember(event)">
+        <div class="field">
+          <label for="memberName">Member Name</label>
+          <input type="text" id="memberName" placeholder="e.g. John Doe" required />
+        </div>
+        <button type="submit" class="btn btn-glow full">Add Member</button>
+      </form>
+
+      <!-- Issue Book Form -->
+      <form id="formIssueBook" class="modal-form" onsubmit="submitIssueBook(event)">
+        <div class="field">
+          <label for="issueBookId">Book ID</label>
+          <input type="number" id="issueBookId" placeholder="e.g. 1" required />
+        </div>
+        <div class="field">
+          <label for="issueMemberId">Member ID</label>
+          <input type="number" id="issueMemberId" placeholder="e.g. 1001" required />
+        </div>
+        <button type="submit" class="btn btn-glow full">Issue Book</button>
+      </form>
+
+      <!-- Return Book Form -->
+      <form id="formReturnBook" class="modal-form" onsubmit="submitReturnBook(event)">
+        <div class="field">
+          <label for="returnBookId">Book ID</label>
+          <input type="number" id="returnBookId" placeholder="e.g. 1" required />
+        </div>
+        <button type="submit" class="btn btn-glow full">Return Book</button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2026 Library System &mdash; Built with ❤️</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

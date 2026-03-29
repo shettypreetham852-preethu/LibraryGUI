@@ -1,0 +1,6 @@
+1,Java,Preetham,false
+2,Java,Navathe,false
+3,C++,Charles,false
+4,DBMS,Nitzy,true
+5,AIML,AI,true
+6,java,neuman,true
